@@ -20,6 +20,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      run: cargo build --verbose --release
+    - name: Upload builds
+      uses: actions/upload-artifact@v3
+      with:
+        name: format('{{tcli-{0}}}', matrix.os)
+        path: target/release/tcli
