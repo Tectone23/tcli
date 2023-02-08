@@ -1,12 +1,10 @@
 use std::process::exit;
-use termion::{color, style};
+use colored::*;
 
 pub fn throw(error: &str) {
-  let red = color::Fg(color::Red);
-  let reset = color::Fg(color::Reset);
-  let bold = style::Bold;
+  let f_error = error.red().bold();
 
-  println!("{red}{bold}{error}{reset}");
+  println!("{f_error}");
 
   exit(1)
 }
