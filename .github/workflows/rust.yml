@@ -37,5 +37,5 @@ jobs:
       if: ${{ matrix.os == 'windows-latest' }}
       uses: actions/upload-artifact@v3
       with:
-        name: tcli-windows
-        path: target/release/tcli
+        name: tcli-windows.exe
+        path: target/release/tcli.exe
