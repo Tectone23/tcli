@@ -22,7 +22,26 @@ jobs:
     - name: Build
       run: cargo build --verbose --release
     - name: Upload builds
+      if: ${{ runner.os == 'Linux' }}
       uses: actions/upload-artifact@v3
       with:
-        name: format('{{tcli-{0}}}', matrix.os)
+        name: tcli-linux
+        path: target/release/tcli
+    - name: Upload Linux builds
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: tcli-linux
+        path: target/release/tcli
+    - name: Upload MacOS builds
+      if: ${{ runner.os == 'macos-latest' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: tcli-macos
+        path: target/release/tcli
+    - name: Upload Windows builds
+      if: ${{ runner.os == 'windows-latest' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: tcli-windows
         path: target/release/tcli
