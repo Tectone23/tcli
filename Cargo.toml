@@ -3,6 +3,10 @@ name = "tcli"
 version = "0.1.1-beta"
 edition = "2021"
 description = "An utility app to help creating cogs for TCore"
+authors = ["Kunal Dandekar"]
+homepage = "https://github.com/Tectone23/tcli"
+repository = "https://github.com/Tectone23/tcli"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
