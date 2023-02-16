@@ -14,6 +14,9 @@ pub enum EntityType {
 
   /// Add a new action to the cog
   Add(Action),
+
+  /// Install specified TCore components on your system
+  ComponentGet(Components)
 }
 
 #[derive(Debug, Args)]
@@ -25,4 +28,15 @@ pub struct Directory {
 pub struct Action {
   /// Add a new action to the cog WIP
   pub action: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct Components {
+  #[clap(subcommand)]
+  pub component: ComponentList
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ComponentList {
+  Runtime
 }

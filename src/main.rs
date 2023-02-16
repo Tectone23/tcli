@@ -1,10 +1,12 @@
 mod args;
+mod components;
+mod errors;
 mod init_files;
 mod utils;
-mod errors;
 
-use args::{EntityType, TcliArgs};
+use args::{ComponentList, EntityType, TcliArgs};
 use clap::Parser;
+use components::install_runtime;
 use utils::create_project;
 
 fn main() {
@@ -24,5 +26,10 @@ fn main() {
       create_project(directory);
     }
     EntityType::Add(_) => {}
+    EntityType::ComponentGet(e) => match e.component {
+      ComponentList::Runtime => {
+        install_runtime();
+      }
+    },
   }
 }
