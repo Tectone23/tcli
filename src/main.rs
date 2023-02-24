@@ -3,6 +3,7 @@ mod components;
 mod errors;
 mod init_files;
 mod utils;
+mod files;
 
 use args::{ComponentList, EntityType, TcliArgs};
 use clap::Parser;

@@ -14,3 +14,9 @@ pub fn success(message: &str) {
 
   println!("{f_msg}");
 }
+
+pub fn info(message: &str) {
+  let f_msg = message.blue().bold();
+
+  println!("{f_msg}");
+}

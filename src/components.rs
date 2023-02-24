@@ -1,6 +1,6 @@
-use crate::errors::{success, throw};
+use crate::{errors::{success, throw}, files::AppFiles};
 
-use std::process::Command;
+use std::{process::{Command}};
 
 pub fn install_runtime() -> Option<String> {
   if cfg!(windows) {
@@ -34,14 +34,15 @@ fn install_runtime_unix() -> Option<String> {
           "✔ Python version {version} detected\n✔ Proceeding with installation"
         ))
       } else {
-        println!(
+        throw(String::as_str(&format!(
           "❌ Python version {version} is not supported. Please install python version 3 or above"
-        );
+        )));
         return Some("Wrong python version".to_string());
       }
 
       // make the required files/directories
-
+      let files = AppFiles::new();
+      files.check_and_generate();
 
     }
     Err(err) => {
