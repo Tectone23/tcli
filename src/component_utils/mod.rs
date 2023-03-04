@@ -1,4 +1,10 @@
-use crate::{errors::{success, throw}, files::AppFiles};
+mod get_tre;
+
+use crate::{
+  errors::{success, throw},
+  files::AppFiles,
+};
+use get_tre::get_tre;
 
 use std::process::Command;
 
@@ -43,7 +49,7 @@ fn install_runtime_unix() -> Option<String> {
       // make the required files/directories
       let files = AppFiles::new();
       files.check_and_generate();
-
+      //get_tre();
     }
     Err(err) => {
       return Some(err.to_string());
