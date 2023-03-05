@@ -9,7 +9,7 @@ mod utils;
 use args::{ComponentList, EntityType, TcliArgs};
 use clap::Parser;
 use component_utils::install_runtime;
-use config_utils::test;
+use config_utils::component_config::sample_config;
 use utils::create_project;
 
 fn main() {
@@ -32,7 +32,7 @@ fn main() {
     EntityType::ComponentGet(e) => match e.component {
       ComponentList::Runtime => {
         install_runtime();
-        test();
+        sample_config();
       }
     },
   }

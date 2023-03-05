@@ -1,35 +1,48 @@
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
+use crate::errors::throw;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ComponentConfig {
-  install: Install,
-  actions: HashMap<String, String>,
+    runner: Runners,
+    install: Install,
+    actions: HashMap<String, String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Install {
-  artifacts: String,
-  cmd_nix: Vec<String>,
+    artifacts: String,
+    cmd_nix: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum Runners {
+    #[serde(rename = "python")]
+    Python
 }
 
 pub fn sample_config() {
-  let test_cfg = r#"
+    let test_cfg = r#"
+runner: python
 install:
-    artifacts: "https://raw.githubusercontent.com/Tectone23/MobileRuntime/main/config.json"
-    cmd_nix:
-        - "mv config.json ~/.tre-config.json"
-        - "./src/main.py --headless-init"
-
+  artifacts: "https://raw.githubusercontent.com/Tectone23/MobileRuntime/main/config.json"
+  cmd_nix:
+    - "mv config.json ~/.tre-config.json"
+    - "./src/main.py --headless-init"
 actions:
-    run_api: "--cog_path={cog_path}"
-    run_interactive: "--cog_path={cog_path} --interactive"
-    version: "--version"
+  run_api: "--cog_path={cog_path}"
+  run_interactive: "--cog_path={cog_path} --interactive"
+  version: "--version"
       "#;
 
-  let yaml: ComponentConfig = serde_yaml::from_str(test_cfg).unwrap();
+    let yaml: Result<ComponentConfig, serde_yaml::Error> = serde_yaml::from_str(test_cfg);
 
-  println!("{}", serde_yaml::to_string(&yaml).unwrap());
-  println!("{:?}", yaml);
+    match yaml {
+        Ok(yaml) => {
+            println!("{}", serde_yaml::to_string(&yaml).unwrap());
+            println!("{:?}", yaml);
+        }
+        Err(err) => throw(err.to_string().as_str()),
+    }
 }
