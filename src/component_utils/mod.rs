@@ -1,4 +1,4 @@
-mod component;
+pub mod component;
 
 use crate::{
     errors::{success, throw},
@@ -8,18 +8,18 @@ use std::{process::Command, str::FromStr};
 
 use self::component::TcliComponent;
 
-pub fn install_runtime() -> Option<String> {
+pub fn install_runtime(component_name: &str) -> Option<String> {
     if cfg!(windows) {
         throw("Windows is not supported yet");
         panic!("")
     } else if cfg!(unix) {
-        install_runtime_unix()
+        install_runtime_unix(component_name)
     } else {
         return Some("Target operating system is not of type windows or unix".to_string());
     }
 }
 
-fn install_runtime_unix() -> Option<String> {
+fn install_runtime_unix(component_name: &str) -> Option<String> {
     let output = Command::new("python").arg("--version").output();
 
     match output {
@@ -50,7 +50,7 @@ fn install_runtime_unix() -> Option<String> {
             let files = AppFiles::new();
             files.check_and_generate();
 
-            let _tre = TcliComponent::new(String::from_str("tre").unwrap());
+            let _tre = TcliComponent::get_new(String::from_str(component_name).unwrap());
         }
         Err(err) => {
             return Some(err.to_string());

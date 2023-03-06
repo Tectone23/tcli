@@ -10,7 +10,6 @@ pub struct AppFiles {
     pub root_dir: PathBuf,
     pub components_dir: PathBuf,
     pub bin_dir: PathBuf,
-    pub clone_dir: PathBuf,
 }
 
 impl AppFiles {
@@ -30,22 +29,16 @@ impl AppFiles {
         let mut components_dir = root_dir.clone();
         components_dir.push("components/");
 
-        // .tcli/git-cache/
-        let mut clone_dir = root_dir.clone();
-        clone_dir.push("git-cache/");
-
         return Self {
             root_dir,
             components_dir,
             bin_dir,
-            clone_dir,
         };
     }
     pub fn check_and_generate(&self) {
         self.generate(&self.root_dir);
         self.generate(&self.components_dir);
         self.generate(&self.bin_dir);
-        self.generate(&self.clone_dir);
     }
 
     fn generate(&self, path: &PathBuf) {

@@ -5,15 +5,15 @@ use crate::errors::throw;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ComponentConfig {
-    runner: Runners,
-    install: Install,
-    actions: HashMap<String, String>,
+    pub runner: Runners,
+    pub install: Install,
+    pub actions: HashMap<String, String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Install {
-    artifacts: String,
-    cmd_nix: Vec<String>,
+    pub artifacts: String,
+    pub cmd_nix: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

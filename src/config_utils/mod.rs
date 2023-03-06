@@ -7,7 +7,7 @@ use component_config::ComponentConfig;
 
 pub fn read_config(path: &PathBuf) -> ComponentConfig {
     let mut config_path = path.clone();
-    config_path.push("/config.yaml");
+    config_path.push("config.yaml");
 
     let config = fs::read_to_string(config_path).unwrap();
 
