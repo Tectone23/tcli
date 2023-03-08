@@ -33,14 +33,14 @@ impl TcliComponent {
         // mechanisms to skip steps which are not needed - DONE
         let has_component = component.check_path();
         if has_component {
-            component.get_files();
-        } else {
             component.update();
+        } else {
+            component.get_files();
         }
         component.check_validity();
         component.load_config();
 
-        // TODO run install script
+        component.run_install_scripts();
 
         return component;
     }
@@ -61,9 +61,9 @@ impl TcliComponent {
                     throw(err.to_string().as_str());
                 }
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     fn check_validity(&self) {
@@ -140,6 +140,15 @@ impl TcliComponent {
                 }
             }
             Err(e) => throw(e.to_string().as_str()),
+        }
+    }
+
+    fn run_install_scripts(&self) {
+        match &self.config {
+            Some(config) => {
+                println!("{:?}", config.install.cmd_nix);
+            }
+            None => throw("Config not loaded properly"),
         }
     }
 }
