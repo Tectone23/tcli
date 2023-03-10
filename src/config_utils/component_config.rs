@@ -12,7 +12,7 @@ pub struct ComponentConfig {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Install {
-    pub artifacts: String,
+    pub artifacts: Vec<String>,
     pub cmd_nix: Vec<String>,
 }
 

@@ -147,6 +147,26 @@ impl TcliComponent {
         match &self.config {
             Some(config) => {
                 println!("{:?}", config.install.cmd_nix);
+                let cmd_nix = &config.install.cmd_nix;
+                let home_dir = dirs::home_dir().expect("A valid home dir could not be detected");
+
+                for x in cmd_nix {
+                    let mut parts = x.splitn(2, " ");
+                    let cmd = parts.next().unwrap();
+                    let args = parts
+                        .next()
+                        .unwrap_or("")
+                        .replace("$HOME", &home_dir.to_str().unwrap());
+
+                    println!("{cmd} ||| {args}");
+
+                    let out = Command::new(cmd)
+                        .args(args.split(" "))
+                        .current_dir(&self.path)
+                        .output();
+
+                    println!("{:?}", out);
+                }
             }
             None => throw("Config not loaded properly"),
         }

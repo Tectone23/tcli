@@ -11,7 +11,10 @@ use clap::Parser;
 use component_utils::install_runtime;
 use utils::create_project;
 
-use crate::{errors::throw, component_utils::component::TcliComponent};
+use crate::{
+    component_utils::component::TcliComponent,
+    errors::{info, throw},
+};
 
 fn main() {
     // init_files();
@@ -42,13 +45,34 @@ fn main() {
             if args.component.is_empty() {
                 throw("Provide a valid component name");
             } else {
-                println!("{:?}", args);
                 let mut component = TcliComponent::new(args.component[0].clone());
                 component.load_config();
 
-                println!("{:?}", component.config.unwrap().actions);
+                match component.config {
+                    Some(config) => {
+                        let task_list = config.actions.keys();
+                        if args.component.len() >= 2 {
+                            let task = args.component[1].clone();
+                            if config.actions.contains_key(task.as_str()) {
+                                println!("{}", config.actions.get(task.as_str()).unwrap());
+                            } else {
+                                info("Task not found\nThe following tasks can be run:\n");
+                                for x in task_list {
+                                    info(&format!("    {}", x));
+                                }
+                                throw("\nNo task provided");
+                            }
+                        } else {
+                            info("No task provided\nThe following tasks can be run:\n");
+                            for x in task_list {
+                                info(&format!("    {}", x));
+                            }
+                            throw("\nNo task provided");
+                        }
+                    }
+                    None => throw("No such component installed"),
+                }
             }
-            
         }
     }
 }
