@@ -6,7 +6,7 @@ use crate::{
 };
 use std::{process::Command, str::FromStr};
 
-use self::component::TcliComponent;
+use self::component::TComponent;
 
 pub fn install_runtime(component_name: &str) -> Option<String> {
     if cfg!(windows) {
@@ -50,7 +50,7 @@ fn install_runtime_unix(component_name: &str) -> Option<String> {
             let files = AppFiles::new();
             files.check_and_generate();
 
-            let _tre = TcliComponent::get_new(String::from_str(component_name).unwrap());
+            let _tre = TComponent::get_new(String::from_str(component_name).unwrap());
         }
         Err(err) => {
             return Some(err.to_string());

@@ -3,48 +3,89 @@ use crate::config_utils::read_config;
 use crate::errors::*;
 use crate::files::AppFiles;
 use std::fs::DirBuilder;
+use std::marker::PhantomData;
 use std::path::PathBuf;
-use std::process::Command;
+use std::process::{exit, Command};
 
-pub struct TcliComponent {
+pub struct ConfLoaded;
+pub struct ConfDropped;
+
+pub struct TComponent<T = ConfDropped> {
     name: String,
-    path: PathBuf,
-    pub config: Option<ComponentConfig>,
+    pub path: PathBuf,
+    state: PhantomData<T>,
+    config: Option<ComponentConfig>,
 }
 
-impl TcliComponent {
-    pub fn new(name: String) -> Self {
+impl TComponent<ConfDropped> {
+    pub fn new(name: String) -> TComponent<ConfLoaded> {
         let files = AppFiles::new();
         let mut path = files.components_dir.clone();
         path.push(format!("{name}/"));
 
-        let component = TcliComponent {
+        let mut component = TComponent {
             name,
             path,
+            state: PhantomData::<ConfLoaded>,
             config: None::<ComponentConfig>,
         };
+        let has_component = component.check_path();
 
-        return component;
+        if has_component {
+            component.check_validity();
+            component.load_config();
+        } else {
+            throw("Component not found");
+        }
+
+        match component.config {
+            Some(_) => {
+                return component;
+            }
+            None => {
+                throw("Config could not loaded properly");
+                exit(1);
+            }
+        };
     }
 
-    pub fn get_new(name: String) -> Self {
-        let mut component = TcliComponent::new(name);
+    pub fn get_new(name: String) -> TComponent<ConfLoaded> {
+        let files = AppFiles::new();
+        let mut path = files.components_dir.clone();
+        path.push(format!("{name}/"));
 
-        // mechanisms to skip steps which are not needed - DONE
+        let mut component = TComponent {
+            name,
+            path,
+            state: PhantomData::<ConfLoaded>,
+            config: None::<ComponentConfig>,
+        };
         let has_component = component.check_path();
+
         if has_component {
+            component.check_validity();
+            component.load_config();
             component.update();
         } else {
+            info("Downloading component from remote");
             component.get_files();
         }
-        component.check_validity();
-        component.load_config();
 
         component.run_install_scripts();
 
-        return component;
+        match component.config {
+            Some(_) => {
+                return component;
+            }
+            None => {
+                throw("Config could not loaded properly");
+                exit(1);
+            }
+        };
     }
+}
 
+impl TComponent<ConfLoaded> {
     // Check if the path exists, if no then create it
     fn check_path(&mut self) -> bool {
         if !self.path.is_dir() {
@@ -81,6 +122,16 @@ impl TcliComponent {
     pub fn load_config(&mut self) {
         let config = read_config(&self.path);
         self.config = Some(config);
+    }
+
+    pub fn get_config(&self) -> ComponentConfig {
+        match self.config.clone() {
+            Some(conf) => return conf,
+            None => {
+                throw("Config not loaded properly");
+                exit(0);
+            }
+        }
     }
 
     fn get_files(&self) {

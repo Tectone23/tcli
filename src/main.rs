@@ -6,15 +6,19 @@ mod files;
 mod init_files;
 mod utils;
 
-use args::{EntityType, TcliArgs};
+use std::process::Command;
+
+use args::{Components, EntityType, TcliArgs};
 use clap::Parser;
-use component_utils::install_runtime;
+use component_utils::{
+    component::{ConfLoaded, TComponent},
+    install_runtime,
+};
 use utils::create_project;
 
-use crate::{
-    component_utils::component::TcliComponent,
-    errors::{info, throw},
-};
+use crate::errors::{info, throw};
+
+const ARGUMENT_SUB: &str = "%arg%";
 
 fn main() {
     // init_files();
@@ -37,7 +41,6 @@ fn main() {
             if args.component.is_empty() {
                 throw("Provide a valid component name\nDo component-ls to list all available components");
             } else {
-                println!("{:?}", args);
                 install_runtime(&args.component[0]);
             }
         }
@@ -45,34 +48,79 @@ fn main() {
             if args.component.is_empty() {
                 throw("Provide a valid component name");
             } else {
-                let mut component = TcliComponent::new(args.component[0].clone());
-                component.load_config();
-
-                match component.config {
-                    Some(config) => {
-                        let task_list = config.actions.keys();
-                        if args.component.len() >= 2 {
-                            let task = args.component[1].clone();
-                            if config.actions.contains_key(task.as_str()) {
-                                println!("{}", config.actions.get(task.as_str()).unwrap());
-                            } else {
-                                info("Task not found\nThe following tasks can be run:\n");
-                                for x in task_list {
-                                    info(&format!("    {}", x));
-                                }
-                                throw("\nNo task provided");
-                            }
-                        } else {
-                            info("No task provided\nThe following tasks can be run:\n");
-                            for x in task_list {
-                                info(&format!("    {}", x));
-                            }
-                            throw("\nNo task provided");
-                        }
-                    }
-                    None => throw("No such component installed"),
-                }
+                run_component(args);
             }
+        }
+    }
+}
+
+fn run_component(args: Components) {
+    // args[0] -> Component name
+    // args[1] -> Taks name
+    // args[2] -> Taks arg
+
+    let component = TComponent::new(args.component[0].clone());
+    let config = component.get_config();
+
+    let task_list = config.actions.keys();
+    if args.component.len() >= 2 {
+        let task = args.component[1].clone();
+        let task = task.as_str();
+        let task = config.actions.get(task);
+
+        match task {
+            Some(task) => {
+                let mut arg = String::new();
+                if task.contains(ARGUMENT_SUB) && args.component.len() >= 3 {
+                    arg = args.component[2].clone();
+                }
+                run_component_task(task, arg, component);
+            }
+            None => {
+                info("Task not found\nThe following tasks can be run:\n");
+                for x in task_list {
+                    info(&format!("    {}", x));
+                }
+                throw("\nNo task provided");
+            }
+        }
+    } else {
+        info("No task provided\nThe following tasks can be run:\n");
+        for x in task_list {
+            info(&format!("    {}", x));
+        }
+        throw("\nNo task provided");
+    }
+}
+
+fn run_component_task(task: &str, arg: String, component: TComponent<ConfLoaded>) {
+    let mut task = task.clone().to_string();
+    let home_dir = dirs::home_dir().expect("A valid home dir could not be detected");
+
+    if task.contains(ARGUMENT_SUB) {
+        task = task.replace(ARGUMENT_SUB, arg.as_str())
+    }
+
+    let mut parts = task.splitn(2, " ");
+    let cmd = parts.next().unwrap();
+    let args = parts
+        .next()
+        .unwrap_or("")
+        .replace("$HOME", &home_dir.to_str().unwrap())
+        .replace(ARGUMENT_SUB, arg.as_str());
+
+    let out = Command::new(cmd)
+        .args(args.split(" "))
+        .current_dir(component.path)
+        .stdout(std::process::Stdio::inherit())
+        .output();
+
+    match out {
+        Ok(_) => {
+            info("Execution of component finished, exiting tcli");
+        }
+        Err(err) => {
+            throw(&format!("{}", err));
         }
     }
 }
