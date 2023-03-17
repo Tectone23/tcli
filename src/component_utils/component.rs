@@ -197,7 +197,7 @@ impl TComponent<ConfLoaded> {
     fn run_install_scripts(&self) {
         match &self.config {
             Some(config) => {
-                println!("{:?}", config.install.cmd_nix);
+                // println!("{:?}", config.install.cmd_nix);
                 let cmd_nix = &config.install.cmd_nix;
                 let home_dir = dirs::home_dir().expect("A valid home dir could not be detected");
 
@@ -209,14 +209,14 @@ impl TComponent<ConfLoaded> {
                         .unwrap_or("")
                         .replace("$HOME", &home_dir.to_str().unwrap());
 
-                    println!("{cmd} ||| {args}");
+                    // println!("{cmd} ||| {args}");
 
-                    let out = Command::new(cmd)
+                    let _ = Command::new(cmd)
                         .args(args.split(" "))
                         .current_dir(&self.path)
                         .output();
 
-                    println!("{:?}", out);
+                    // println!("{:?}", out);
                 }
             }
             None => throw("Config not loaded properly"),
