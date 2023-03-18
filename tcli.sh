@@ -42,10 +42,10 @@ case $platform in
     info "Installing tcli for MacOS"
     target=darwin-x86_64
     ;;
-'Darwin arm64')
-    info "Installing tcli for MacOS (ARM)"
-    target=darwin-aarch64
-    ;;
+#'Darwin arm64')
+#    info "Installing tcli for MacOS (ARM)"
+#    target=darwin-aarch64
+#    ;;
 'Linux x86_64')
     info "Installing tcli for Linux"
     target=linux-x86_64

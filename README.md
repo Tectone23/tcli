@@ -5,5 +5,5 @@ TCLI is a tool with the intention of making TCore Cog development easier. This t
 ## Installation
 Currently we only support MacOS and Linux. Windows is supported through WSL.
 ```bash
-curl -fsSL 
+curl -fsSL https://raw.githubusercontent.com/Tectone23/tcli/main/tcli.sh | bash
 ```
