@@ -40,15 +40,15 @@ platform=$(uname -ms)
 case $platform in
 'Darwin x86_64')
     info "Installing tcli for MacOS"
-    target=darwin-x64
+    target=darwin-x86_64
     ;;
 'Darwin arm64')
-    info "Installing tcli for MacOS (M1)"
+    info "Installing tcli for MacOS (ARM)"
     target=darwin-aarch64
     ;;
 'Linux x86_64')
     info "Installing tcli for Linux"
-    target=linux
+    target=linux-x86_64
     ;;
   *)
     error "$platform is not supported. You can open a feature request at https://github.com/Tectone23/tcli/issues"
@@ -79,5 +79,36 @@ chmod +x "$INSTALL_DIR/tcli" ||
 
 success "Installation completed successfully"
 
-# TODO
-info "Add $INSTALL_DIR/tcli to your \$PATH"
+# Functions for different shells
+fish_path() {
+  if [[ ! -d $HOME/.config/fish ]]; then
+    mkdir -p "$HOME/.config/fish"
+  fi
+  echo "" >> $HOME/.config/fish/config.fish
+  echo "#TCLI" >> $HOME/.config/fish/config.fish
+  echo "fish_add_path $INSTALL_DIR" >> $HOME/.config/fish/config.fish
+}
+
+bash_path() {
+  echo "" >> $HOME/.bashrc
+  echo "#TCLI" >> $HOME/.bashrc
+  echo "export PATH=\$PATH:$INSTALL_DIR" >> $HOME/.bashrc
+}
+
+zsh_path() {
+  echo "" >> $HOME/.zshrc
+  echo "#TCLI" >> $HOME/.zshrc
+  echo "export PATH=\$PATH:$INSTALL_DIR" >> $HOME/.zshrc
+}
+
+
+if echo "$PATH" | grep -q "$INSTALL_DIR"; then
+  info "$INSTALL_DIR is already in your PATH"
+else
+  info "Adding $INSTALL_DIR to your PATH"
+  fish_path
+  bash_path
+  zsh_path
+fi
+
+success "Installation completed successfully"
