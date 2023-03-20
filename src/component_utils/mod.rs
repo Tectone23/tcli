@@ -20,7 +20,7 @@ pub fn install_runtime(component_name: &str) -> Option<String> {
 }
 
 fn install_runtime_unix(component_name: &str) -> Option<String> {
-    let output = Command::new("python").arg("--version").output();
+    let output = Command::new("python3").arg("--version").output();
 
     match output {
         Ok(o) => {
@@ -53,6 +53,7 @@ fn install_runtime_unix(component_name: &str) -> Option<String> {
             let _tre = TComponent::get_new(String::from_str(component_name).unwrap());
         }
         Err(err) => {
+            throw(&format!("Error when getting the python version: {}", err.to_string()));
             return Some(err.to_string());
         }
     }
