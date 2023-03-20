@@ -54,7 +54,7 @@ fn install_runtime_unix(component_name: &str) -> Option<String> {
         }
         Err(err) => {
             throw(&format!("Error when getting the python version: {}", err.to_string()));
-            return Some(err.to_string());
+            unreachable!();
         }
     }
 
