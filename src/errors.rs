@@ -6,7 +6,7 @@ pub fn throw(error: &str) {
 
   println!("{f_error}");
 
-  exit(1)
+  exit(1);
 }
 
 pub fn success(message: &str) {

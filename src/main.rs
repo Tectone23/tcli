@@ -51,6 +51,7 @@ fn main() {
                 run_component(args);
             }
         }
+        EntityType::ComponentLs => list_components(),
     }
 }
 
@@ -123,4 +124,10 @@ fn run_component_task(task: &str, arg: String, component: TComponent<ConfLoaded>
             throw(&format!("{}", err));
         }
     }
+}
+
+fn list_components() {
+    info("These are the available components:");
+    info("");
+    info("runtime - The TCore Runtime Enviornment is a portable runtime for testing Cogs without having to have full version of TCore running");
 }
