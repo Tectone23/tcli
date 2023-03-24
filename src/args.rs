@@ -1,7 +1,6 @@
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
-#[clap(version, about)]
 pub struct TcliArgs {
     #[clap(subcommand)]
     pub sub: EntityType,
@@ -20,6 +19,18 @@ pub enum EntityType {
 
     /// Install specified TCore components on your system
     Run(Components),
+
+    /// Upload cogs to midgard
+    Upload,
+
+    /// Set the current user for midgard
+    User(UserOptions),
+}
+
+#[derive(Debug, Args)]
+pub struct UserOptions {
+    pub username: String,
+    pub password: String
 }
 
 #[derive(Debug, Args)]

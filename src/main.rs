@@ -5,6 +5,8 @@ mod errors;
 mod files;
 mod init_files;
 mod utils;
+mod user;
+mod cipher;
 
 use std::process::Command;
 
@@ -14,6 +16,7 @@ use component_utils::{
     component::{ConfLoaded, TComponent},
     install_runtime,
 };
+use user::add_user;
 use utils::create_project;
 
 use crate::errors::{info, throw};
@@ -51,6 +54,8 @@ fn main() {
                 run_component(args);
             }
         }
+        EntityType::Upload => println!("Uploading bitch"),
+        EntityType::User(arg) => add_user(arg.username, arg.password),
     }
 }
 
