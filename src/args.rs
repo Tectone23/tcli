@@ -17,6 +17,9 @@ pub enum EntityType {
     /// Install specified TCore components on your system
     ComponentGet(Components),
 
+    /// List all TCore components
+    ComponentLs,
+
     /// Install specified TCore components on your system
     Run(Components),
 
