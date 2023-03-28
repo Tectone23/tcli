@@ -23,11 +23,11 @@ pub enum EntityType {
     /// Install specified TCore components on your system
     Run(Components),
 
-    /// Upload cogs to midgard
+    /// Upload cogs to cogstore.tcore.io
     Upload,
 
-    /// Set the current user for midgard
-    User(UserOptions),
+    /// Create a new user which can be used to upload cogs to cogstore.tcore.io
+    CreateUser,
 }
 
 #[derive(Debug, Args)]

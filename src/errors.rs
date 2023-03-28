@@ -8,6 +8,11 @@ pub fn throw(error: &str) {
 
   exit(1);
 }
+pub fn error(error: &str) {
+  let f_error = error.red().bold();
+
+  println!("{f_error}");
+}
 
 pub fn success(message: &str) {
   let f_msg = message.green().bold();
