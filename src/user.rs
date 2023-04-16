@@ -62,14 +62,12 @@ fn create_user(username: String, email: String, file: PathBuf) {
     };
 }
 
-pub fn check_user() {
+pub fn check_user() -> Result<String, String> {
     let files = AppFiles::new();
     let mut file = files.root_dir.clone();
     file.push("user");
 
     if file.exists() {
-        // read file
-
         let file_text = String::from_utf8(std::fs::read(file).unwrap()).unwrap();
 
         let cipher_out = serde_json::from_str::<CipherOut>(file_text.as_str()).unwrap();
@@ -82,14 +80,12 @@ pub fn check_user() {
             cipher_out.salt.as_str(),
         );
 
-        match password_input {
-            Ok(_) => success("The password matches!!"),
-            Err(err) => throw(&format!("{}", err)),
-        }
+        return password_input
     } else {
         info("No existing user found");
-        info("Generating new user");
-        add_user();
+        info("Run the following command to create a new user");
+        info("tcli create-user");
+        return Err(String::from("No user found"));
     }
 }
 

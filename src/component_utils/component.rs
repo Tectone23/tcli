@@ -19,6 +19,7 @@ pub struct TComponent<T = ConfDropped> {
 
 impl TComponent<ConfDropped> {
     pub fn new(name: String) -> TComponent<ConfLoaded> {
+
         let files = AppFiles::new();
         let mut path = files.components_dir.clone();
         path.push(format!("{name}/"));
