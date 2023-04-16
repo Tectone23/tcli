@@ -152,6 +152,9 @@ fn list_components() {
 }
 
 fn upload_cog_questions() -> (String, Answers) {
+
+    let max_len_short_desc = 50;
+
     if let Ok(key) = check_user() {
         info("Uploading cog");
         let questions = vec![
@@ -162,9 +165,9 @@ fn upload_cog_questions() -> (String, Answers) {
                 .message("Provide a description for your cog")
                 .build(),
             Question::input("short_description")
-                .message("Short description (max 255 char)")
+                .message(format!("Short description (max {max_len_short_desc} char)"))
                 .validate(|value, _| {
-                    if value.len() > 255 {
+                    if value.len() > max_len_short_desc {
                         return Err(String::from(
                             "Short description must be less than 255 characters",
                         ));
@@ -173,7 +176,7 @@ fn upload_cog_questions() -> (String, Answers) {
                     }
                 })
                 .validate_on_key(|value, _| {
-                    if value.len() > 255 {
+                    if value.len() > max_len_short_desc {
                         return false;
                     } else {
                         return true;
@@ -192,8 +195,7 @@ fn upload_cog_questions() -> (String, Answers) {
                     }
                 })
                 .validate_on_key(|value, _| {
-                    if let Ok(i) = value.parse::<i32>() {
-                        println!("{}", i);
+                    if let Ok(_) = value.parse::<i32>() {
                         return true;
                     } else {
                         return false;
