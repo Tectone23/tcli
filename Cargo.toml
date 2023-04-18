@@ -1,6 +1,6 @@
 [package]
 name = "tcli"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 description = "An utility app to help creating cogs for TCore"
 authors = ["Kunal Dandekar"]
