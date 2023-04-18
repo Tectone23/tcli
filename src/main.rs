@@ -152,7 +152,6 @@ fn list_components() {
 }
 
 fn upload_cog_questions() -> (String, Answers) {
-
     let max_len_short_desc = 50;
 
     if let Ok(key) = check_user() {
