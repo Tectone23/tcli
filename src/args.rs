@@ -1,6 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
+#[clap(version)]
 pub struct TcliArgs {
     #[clap(subcommand)]
     pub sub: EntityType,
