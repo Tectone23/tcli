@@ -1,6 +1,6 @@
 [package]
 name = "tcli"
-version = "0.3.0"
+version = "0.4.0-rc1"
 edition = "2021"
 description = "An utility app to help creating cogs for TCore"
 authors = ["Kunal Dandekar"]
@@ -27,3 +27,4 @@ argon2 = "0.5.0"
 rpassword = "7.2.0"
 regex = "1.7.3"
 requestty = "0.5.0"
+thiserror = "1.0.40"

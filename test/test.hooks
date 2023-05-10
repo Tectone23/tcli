@@ -1,0 +1,7 @@
+hook:
+  namespace: test
+  source_path: src/
+  depends: []
+  actions: null
+config:
+  example_api_url: ''

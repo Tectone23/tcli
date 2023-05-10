@@ -2,7 +2,7 @@ use crate::config_utils::component_config::ComponentConfig;
 use crate::config_utils::read_config;
 use crate::errors::*;
 use crate::files::AppFiles;
-use std::fs::DirBuilder;
+use std::fs::{self, DirBuilder, File};
 use std::marker::PhantomData;
 use std::path::PathBuf;
 use std::process::{exit, Command};
@@ -19,7 +19,6 @@ pub struct TComponent<T = ConfDropped> {
 
 impl TComponent<ConfDropped> {
     pub fn new(name: String) -> TComponent<ConfLoaded> {
-
         let files = AppFiles::new();
         let mut path = files.components_dir.clone();
         path.push(format!("{name}/"));
@@ -70,6 +69,7 @@ impl TComponent<ConfDropped> {
         } else {
             info("Downloading component from remote");
             component.get_files();
+            component.load_config();
         }
 
         component.run_install_scripts();
@@ -219,6 +219,21 @@ impl TComponent<ConfLoaded> {
 
                     // println!("{:?}", out);
                 }
+                // fetch artifacts
+                let artifacts = &config.install.artifacts;
+                info("Fetching the artifacts");
+                artifacts.iter().for_each(|art| {
+                    let res = reqwest::blocking::get(art)
+                        .expect("Failed to fetch an artifact. This is a network error");
+
+                    let file = art.split("/").last().unwrap();
+
+                    let mut path = home_dir.clone();
+                    path.push(file);
+
+                    fs::write(path, res.text().unwrap())
+                        .expect("Failed to write artifacts to the disk");
+                });
             }
             None => throw("Config not loaded properly"),
         }
